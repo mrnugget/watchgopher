@@ -12,14 +12,16 @@ func Watch(path string, interval time.Duration) {
 
 	dir := NewDir(path)
 	ticker := time.Tick(interval)
+	actions := []Action{Unzipper}
 
-	monitor := &Monitor{dir, ticker}
+	monitor := &Monitor{dir, ticker, actions}
 	monitor.start()
 }
 
 type Monitor struct {
-	dir    *Dir
-	ticker <-chan time.Time
+	dir     *Dir
+	ticker  <-chan time.Time
+	actions []Action
 }
 
 func (m *Monitor) start() {
@@ -39,5 +41,9 @@ func (m *Monitor) start() {
 }
 
 func (m *Monitor) run() {
-	fmt.Println(m.dir.Files)
+	for fpath, finfo := range m.dir.Files {
+		for _, action := range m.actions {
+			action(fpath, finfo)
+		}
+	}
 }
