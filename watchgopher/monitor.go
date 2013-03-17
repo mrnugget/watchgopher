@@ -13,8 +13,9 @@ func Watch(path string, interval time.Duration) {
 	dir := NewDir(path)
 	ticker := time.Tick(interval)
 	actions := []Action{Unzipper}
+	queue := make(chan string)
 
-	monitor := &Monitor{dir, ticker, actions}
+	monitor := &Monitor{dir, ticker, actions, queue}
 	monitor.start()
 }
 
@@ -22,9 +23,12 @@ type Monitor struct {
 	dir     *Dir
 	ticker  <-chan time.Time
 	actions []Action
+	queue   chan string
 }
 
 func (m *Monitor) start() {
+	go m.workOff(m.queue)
+
 	err := m.dir.StartWatching()
 	if err != nil {
 		panic(err)
@@ -32,18 +36,21 @@ func (m *Monitor) start() {
 
 	for {
 		select {
-		case <-m.dir.Events:
-			m.run()
+		case ev := <-m.dir.Events:
+			m.queue <- ev.Name
 		case <-m.ticker:
-			m.run()
+			m.dir.scan()
+			for fpath, _ := range m.dir.Files {
+				m.queue <- fpath
+			}
 		}
 	}
 }
 
-func (m *Monitor) run() {
-	for fpath, finfo := range m.dir.Files {
+func (m *Monitor) workOff(queue chan string) {
+	for fpath := range queue {
 		for _, action := range m.actions {
-			action(fpath, finfo)
+			action(fpath)
 		}
 	}
 }

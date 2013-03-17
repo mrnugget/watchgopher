@@ -2,13 +2,12 @@ package watchgopher
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 )
 
-type Action func(string, os.FileInfo)
+type Action func(path string)
 
-func Unzipper(path string, fi os.FileInfo) {
+func Unzipper(path string) {
 	ok, err := regexp.MatchString(`^.*\.zip$`, path)
 
 	if err == nil && ok {
