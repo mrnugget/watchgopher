@@ -1,7 +1,6 @@
 package watchgopher
 
 import (
-	// "github.com/howeyc/fsnotify"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -47,7 +46,7 @@ func TestEvents(t *testing.T) {
 		t.Fatal("Did not receive the right event")
 	}
 
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(1 * time.Millisecond)
 
 	_, ok := dir.Files[testfilepath]
 	if !ok {
@@ -57,7 +56,7 @@ func TestEvents(t *testing.T) {
 	err = os.Remove(testfilepath)
 	checkErr(t, err)
 
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(1 * time.Millisecond)
 
 	deleteev := <-dir.Events
 	if deleteev.Name != testfilepath && !deleteev.IsDelete() {
