@@ -29,7 +29,7 @@ type Monitor struct {
 func (m *Monitor) start() {
 	go m.workOff(m.queue)
 
-	err := m.dir.StartWatching()
+	err := m.dir.Listen()
 	if err != nil {
 		panic(err)
 	}

@@ -20,7 +20,7 @@ type Dir struct {
 	Events chan *fsnotify.FileEvent
 }
 
-func (d *Dir) StartWatching() (err error) {
+func (d *Dir) Listen() (err error) {
 	err = d.scan()
 	if err != nil {
 		return
