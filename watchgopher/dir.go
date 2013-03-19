@@ -9,17 +9,23 @@ import (
 
 const fileChanBuf = 500
 
-func NewDir(path string) (d *Dir) {
+func NewDir(path string) (d *Dir, err error) {
 	files := make(map[string]os.FileInfo)
 	events := make(chan *fsnotify.FileEvent, fileChanBuf)
 
-	return &Dir{path, files, events}
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Dir{path, files, events, watcher}, nil
 }
 
 type Dir struct {
-	Path   string
-	Files  map[string]os.FileInfo
-	Events chan *fsnotify.FileEvent
+	Path    string
+	Files   map[string]os.FileInfo
+	Events  chan *fsnotify.FileEvent
+	watcher *fsnotify.Watcher
 }
 
 func (d *Dir) Listen() (err error) {
@@ -28,24 +34,24 @@ func (d *Dir) Listen() (err error) {
 		return
 	}
 
-	watcher, err := fsnotify.NewWatcher()
+	err = d.watcher.Watch(d.Path)
 	if err != nil {
 		return
 	}
 
-	err = watcher.Watch(d.Path)
-	if err != nil {
-		return
-	}
-
-	go d.handleEvents(watcher.Event, watcher.Error)
+	go d.proxyEvents()
 	return nil
 }
 
-func (d *Dir) handleEvents(events chan *fsnotify.FileEvent, errs chan error) {
+func (d *Dir) Stop() (err error) {
+	err = d.watcher.Close()
+	return
+}
+
+func (d *Dir) proxyEvents() {
 	for {
 		select {
-		case ev := <-events:
+		case ev := <-d.watcher.Event:
 			if ev.IsRename() || ev.IsDelete() {
 				delete(d.Files, ev.Name)
 			}
@@ -57,7 +63,7 @@ func (d *Dir) handleEvents(events chan *fsnotify.FileEvent, errs chan error) {
 				d.Files[ev.Name] = fi
 			}
 			d.Events <- ev
-		case <-errs:
+		case <-d.watcher.Error:
 			break
 		}
 	}

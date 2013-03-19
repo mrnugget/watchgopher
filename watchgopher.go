@@ -23,5 +23,8 @@ func main() {
 		path, _ = os.Getwd()
 	}
 
-	watchgopher.Watch(path, *interval)
+	err := watchgopher.Watch(path, *interval)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -15,10 +15,12 @@ var (
 )
 
 func TestFiles(t *testing.T) {
-	dir := NewDir(fixtures)
-
-	err := dir.Listen()
+	dir, err := NewDir(fixtures)
 	checkErr(t, err)
+
+	err = dir.Listen()
+	checkErr(t, err)
+	defer dir.Stop()
 
 	_, ok := dir.Files[fixtures+"/foobar.txt"]
 	if !ok {
@@ -33,10 +35,13 @@ func TestFiles(t *testing.T) {
 
 func TestEvents(t *testing.T) {
 	testfilepath := fixtures + "/testfile.txt"
-	dir := NewDir(fixtures)
 
-	err := dir.Listen()
+	dir, err := NewDir(fixtures)
 	checkErr(t, err)
+
+	err = dir.Listen()
+	checkErr(t, err)
+	defer dir.Stop()
 
 	err = ioutil.WriteFile(testfilepath, []byte("Hello World!"), 0644)
 	checkErr(t, err)

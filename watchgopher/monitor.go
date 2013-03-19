@@ -5,18 +5,24 @@ import (
 	"time"
 )
 
-func Watch(path string, interval time.Duration) {
+func Watch(path string, interval time.Duration) (err error) {
 	fmt.Println("PATH:", path)
 	fmt.Println("INTERVAL:", interval)
 	fmt.Println("Watchgopher is watching...")
 
-	dir := NewDir(path)
+	dir, err := NewDir(path)
+	if err != nil {
+		return
+	}
+
 	ticker := time.Tick(interval)
 	actions := []Action{Unzipper}
 	queue := make(chan string)
 
 	monitor := &Monitor{dir, ticker, actions, queue}
 	monitor.start()
+
+	return nil
 }
 
 type Monitor struct {
