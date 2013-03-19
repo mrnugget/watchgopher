@@ -41,11 +41,6 @@ func TestEvents(t *testing.T) {
 	err = ioutil.WriteFile(testfilepath, []byte("Hello World!"), 0644)
 	checkErr(t, err)
 
-	createev := <-dir.Events
-	if createev.Name != testfilepath && !createev.IsCreate() {
-		t.Fatal("Did not receive the right event")
-	}
-
 	time.Sleep(1 * time.Millisecond)
 
 	_, ok := dir.Files[testfilepath]
@@ -56,7 +51,10 @@ func TestEvents(t *testing.T) {
 	err = os.Remove(testfilepath)
 	checkErr(t, err)
 
-	time.Sleep(1 * time.Millisecond)
+	createev := <-dir.Events
+	if createev.Name != testfilepath && !createev.IsCreate() {
+		t.Fatal("Did not receive the right event")
+	}
 
 	deleteev := <-dir.Events
 	if deleteev.Name != testfilepath && !deleteev.IsDelete() {

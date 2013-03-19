@@ -7,9 +7,11 @@ import (
 	"path"
 )
 
+const fileChanBuf = 500
+
 func NewDir(path string) (d *Dir) {
 	files := make(map[string]os.FileInfo)
-	events := make(chan *fsnotify.FileEvent)
+	events := make(chan *fsnotify.FileEvent, fileChanBuf)
 
 	return &Dir{path, files, events}
 }
