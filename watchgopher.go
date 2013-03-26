@@ -1,30 +1,19 @@
 package main
 
-import (
-	"flag"
-	"fmt"
-	"github.com/mrnugget/watchgopher/watchgopher"
-	"os"
-	"time"
-)
-
-var interval = flag.Duration("interval", 60*time.Second, "when to check")
-var path string
-
 func main() {
-	flag.Parse()
+	// @TODO: Read configuration file either from `~/.watchgopher` or from
+	// first command line argument
 
-	path = flag.Arg(0)
-	if path == "" {
-		fmt.Println("You have to provide a path to watch")
-		os.Exit(1)
-	}
-	if path == "." {
-		path, _ = os.Getwd()
-	}
+	// @TODO: Parse configuration file to get which directories to watch,
+	// which pattern to match for which directory, which scripts to run on
+	// event
 
-	err := watchgopher.Watch(path, *interval)
-	if err != nil {
-		panic(err)
-	}
+	// @TODO: Watch directories for events (see `dir_watcher.go`) and pass
+	// events to a manager, which checks for appliance of configuration
+
+	// @TODO: If filename matches a pattern (e.g. `*.jpg`), pass it to a worker,
+	// that shells out and runs configured command with two arguments:
+	// `~/bin/script EVENTTYPE FILENAME`, where EVENTTYPE can be CREATE, DELETE,
+	// MODIFY, RENAME and FILENAME is the absolute path to the file which
+	// triggered the event
 }
