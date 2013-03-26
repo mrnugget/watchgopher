@@ -3,15 +3,8 @@ package main
 import (
 	"io/ioutil"
 	"os"
-	"path/filepath"
-	"runtime"
 	"testing"
 	"time"
-)
-
-var (
-	_, filename, _, _ = runtime.Caller(0)
-	fixtures          = filepath.Dir(filename) + "/fixtures"
 )
 
 func TestEvents(t *testing.T) {

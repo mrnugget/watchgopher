@@ -1,0 +1,8 @@
+{
+  "/tmp/foo": {
+    "run": "/usr/local/bar/foobar"
+  },
+  "/tmp/bar": {
+    "run": "/usr/local/bar/foobar"
+  }
+}
