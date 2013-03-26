@@ -3,6 +3,6 @@
     "run": "/usr/local/bar/foobar"
   },
   "/tmp/bar": {
-    "run": "/usr/local/bar/foobar"
+    "run": "/usr/local/bar/barfoo"
   }
 }
