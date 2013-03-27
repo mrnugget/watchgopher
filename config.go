@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 )
 
-var f interface{}
-
 type Rule struct {
 	Path string
 	Run string
@@ -20,6 +18,7 @@ func ParseConfig(path string) (rules []*Rule, err error) {
 		return nil, err
 	}
 
+	var f interface{}
 	err = json.Unmarshal(c, &f)
 	if err != nil {
 		return nil, err

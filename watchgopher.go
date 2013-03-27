@@ -15,16 +15,29 @@ func main() {
 		os.Exit(1)
 	}
 
-	// @TODO: Parse configuration file to get which directories to watch,
-	// which pattern to match for which directory, which scripts to run on
-	// event
-	_, err = ParseConfig(configPath)
+	rules, err := ParseConfig(configPath)
 	if err != nil {
 		fmt.Println("Error: Could not parse config file")
+		os.Exit(1)
 	}
 
-	// @TODO: Watch directories for events (see `dir_watcher.go`) and pass
-	// events to a manager, which checks for appliance of configuration
+	dirs := make([]string, 0)
+	for _, rule := range rules {
+		dirs = append(dirs, rule.Path)
+	}
+
+	watcher, err := WatchDirs(dirs)
+	if err != nil {
+		fmt.Println("Error: Could not start watching directories")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// @TODO: Manage the events, check if a rule applies (file is in path),
+	// then run script with arguments
+	for ev := range watcher.Events {
+		fmt.Println("EVENT - File:", ev.Name)
+	}
 
 	// @TODO: If filename matches a pattern (e.g. `*.jpg`), pass it to a worker,
 	// that shells out and runs configured command with two arguments:
