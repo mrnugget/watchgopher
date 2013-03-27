@@ -2,7 +2,7 @@
   "/tmp/foo": {
     "run": "/usr/local/bar/foobar"
   },
-  "/tmp/bar": {
+  "/tmp/bar/": {
     "run": "/usr/local/bar/barfoo"
   }
 }

@@ -29,6 +29,10 @@ func ParseConfig(path string) (rules []*Rule, err error) {
 		attributes := v.(map[string]interface{})
 		run := attributes["run"].(string)
 
+		for len(path) > 0 && path[len(path)-1] == '/' {
+			path = path[0 : len(path)-1]
+		}
+
 		rules = append(rules, &Rule{path, run})
 	}
 
