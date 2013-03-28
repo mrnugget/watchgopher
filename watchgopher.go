@@ -41,11 +41,7 @@ func main() {
 		}
 	}()
 
-	// @TODO: Manage the events, check if a rule applies (file is in path),
-	// then run script with arguments
-	for ev := range watcher.Events {
-		fmt.Println("EVENT - File:", ev.Name)
-	}
+	Manage(watcher.Events, rules)
 
 	// @TODO: If filename matches a pattern (e.g. `*.jpg`), pass it to a worker,
 	// that shells out and runs configured command with two arguments:

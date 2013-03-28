@@ -7,7 +7,7 @@ import (
 
 type Rule struct {
 	Path string
-	Run string
+	Run  string
 }
 
 func ParseConfig(path string) (rules []*Rule, err error) {
@@ -28,13 +28,16 @@ func ParseConfig(path string) (rules []*Rule, err error) {
 	for path, v := range config {
 		attributes := v.(map[string]interface{})
 		run := attributes["run"].(string)
-
-		for len(path) > 0 && path[len(path)-1] == '/' {
-			path = path[0 : len(path)-1]
-		}
-
+		path = stripTrailingSlash(path)
 		rules = append(rules, &Rule{path, run})
 	}
 
 	return rules, nil
+}
+
+func stripTrailingSlash(path string) string {
+	for len(path) > 0 && path[len(path)-1] == '/' {
+		path = path[0 : len(path)-1]
+	}
+	return path
 }
