@@ -19,20 +19,20 @@ func TestEvents(t *testing.T) {
 	// Rewrite file to trigger Modify event
 	content, err := ioutil.ReadFile(sub1 + "/foobar.txt")
 	checkErr(t, err)
-	err = ioutil.WriteFile(sub1 + "/foobar.txt", content, 0644)
+	err = ioutil.WriteFile(sub1+"/foobar.txt", content, 0644)
 	checkErr(t, err)
 
 	ev := <-watcher.Events
-	if !ev.IsModify() && ev.Name != sub1 + "/foobar.txt" {
+	if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
 		t.Fatal("Wrong event")
 	}
 
 	// Create file to trigger create event
-	err = ioutil.WriteFile(sub2 + "/hello.txt", []byte("Hello World!"), 0644)
+	err = ioutil.WriteFile(sub2+"/hello.txt", []byte("Hello World!"), 0644)
 	checkErr(t, err)
 
 	ev = <-watcher.Events
-	if !ev.IsCreate() && ev.Name != sub2 + "/hello.txt" {
+	if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
 		t.Fatal("Wrong event")
 	}
 
@@ -43,7 +43,7 @@ func TestEvents(t *testing.T) {
 	checkErr(t, err)
 
 	ev = <-watcher.Events
-	if !ev.IsDelete() && ev.Name != sub2 + "/hello.txt" {
+	if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
 		t.Fatal("Wrong event")
 	}
 
