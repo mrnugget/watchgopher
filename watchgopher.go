@@ -33,6 +33,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	defer func() {
+		err = watcher.Stop()
+		if err != nil {
+			fmt.Println("Error: Did not shut down cleanly")
+			os.Exit(1)
+		}
+	}()
+
 	// @TODO: Manage the events, check if a rule applies (file is in path),
 	// then run script with arguments
 	for ev := range watcher.Events {
