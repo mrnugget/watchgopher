@@ -11,7 +11,7 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cm
 
 	go func() {
 		for ev := range events {
-			rule := ruleForEvent(rules, ev)
+			rule := matchingRule(rules, ev.Name)
 			if rule != nil {
 				cmd := exec.Command(rule.Run, getEventType(ev), ev.Name)
 				queue <- cmd
@@ -22,8 +22,8 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cm
 	return
 }
 
-func ruleForEvent(rules []*Rule, ev *fsnotify.FileEvent) (rule *Rule) {
-	path, _ := path.Split(ev.Name)
+func matchingRule(rules []*Rule, filepath string) (rule *Rule) {
+	path, _ := path.Split(filepath)
 	path = stripTrailingSlash(path)
 
 	for _, rule := range rules {
