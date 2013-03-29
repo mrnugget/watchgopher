@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"os"
 )
 
@@ -11,15 +11,14 @@ func main() {
 	configPath := flag.Arg(0)
 	_, err := os.Stat(configPath)
 	if err != nil && os.IsNotExist(err) {
-		fmt.Println("Please pass the path to the config file to watchgopher")
-		os.Exit(1)
+		log.Fatal("ERROR: Could not find configuration file")
 	}
 
 	rules, err := ParseConfig(configPath)
 	if err != nil {
-		fmt.Println("Error: Could not parse config file")
-		os.Exit(1)
+		log.Fatal("ERROR: Could not parse config file")
 	}
+	log.Printf("Successfully loaded configuration file. Number of rules: %d", len(rules))
 
 	dirs := make([]string, 0)
 	for _, rule := range rules {
@@ -28,27 +27,27 @@ func main() {
 
 	watcher, err := WatchDirs(dirs)
 	if err != nil {
-		fmt.Println("Error: Could not start watching directories")
-		fmt.Println(err)
-		os.Exit(1)
+		log.Println("ERROR: Could not start watching directories")
+		log.Fatal(err)
 	}
 
 	defer func() {
 		err = watcher.Stop()
 		if err != nil {
-			fmt.Println("Error: Did not shut down cleanly")
-			os.Exit(1)
+			log.Fatal("ERROR: Did not shut down cleanly")
 		}
 	}()
 
 	queue := Manage(watcher.Events, rules)
 
+	log.Println("Watchgopher is now ready process file events")
+
 	for cmd := range queue {
 		cmd.Stdout = os.Stdout
-		fmt.Printf("NOW RUNNING: %s, ARGS: %s\n", cmd.Path, cmd.Args[1:])
+		log.Printf("NOW RUNNING: %s, ARGS: %s\n", cmd.Path, cmd.Args[1:])
 		err = cmd.Run()
 		if err != nil {
-			fmt.Println("ERROR:", err)
+			log.Println("ERROR:", err)
 			continue
 		}
 	}
