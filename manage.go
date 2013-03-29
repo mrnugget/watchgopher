@@ -1,30 +1,54 @@
 package main
 
 import (
-	"fmt"
 	"github.com/howeyc/fsnotify"
 	"path"
 )
 
-func Manage(events chan *fsnotify.FileEvent, rules []*Rule) {
-	for ev := range events {
-		fmt.Println("RECEIVED EVENT")
-
-		dir, file := path.Split(ev.Name)
-		dir = stripTrailingSlash(dir)
-
-		rule := ruleWithPath(rules, dir)
-		if rule != nil {
-			fmt.Printf("RUN: %s, FILE ARG: %s\n", rule.Run, file)
-		}
-	}
+type Cmd struct {
+	Path      string
+	EventType string
+	EventFile string
 }
 
-func ruleWithPath(rules []*Rule, path string) (rule *Rule) {
+func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *Cmd) {
+	queue = make(chan *Cmd)
+
+	go func() {
+		for ev := range events {
+			rule := ruleForEvent(rules, ev)
+			if rule != nil {
+				cmd := &Cmd{rule.Run, getEventType(ev), ev.Name}
+				queue <- cmd
+			}
+		}
+	}()
+
+	return
+}
+
+func ruleForEvent(rules []*Rule, ev *fsnotify.FileEvent) (rule *Rule) {
+	path, _ := path.Split(ev.Name)
+	path = stripTrailingSlash(path)
+
 	for _, rule := range rules {
 		if rule.Path == path {
 			return rule
 		}
+	}
+	return nil
+}
+
+func getEventType(ev *fsnotify.FileEvent) string {
+	switch {
+	case ev.IsCreate():
+		return "CREATE"
+	case ev.IsModify():
+		return "MODIFY"
+	case ev.IsDelete():
+		return "DELETE"
+	case ev.IsRename():
+		return "RENAME"
 	}
 	return nil
 }

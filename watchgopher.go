@@ -41,11 +41,15 @@ func main() {
 		}
 	}()
 
-	Manage(watcher.Events, rules)
-
 	// @TODO: If filename matches a pattern (e.g. `*.jpg`), pass it to a worker,
 	// that shells out and runs configured command with two arguments:
 	// `~/bin/script EVENTTYPE FILENAME`, where EVENTTYPE can be CREATE, DELETE,
 	// MODIFY, RENAME and FILENAME is the absolute path to the file which
 	// triggered the event
+
+	queue := Manage(watcher.Events, rules)
+
+	for cmd := range queue {
+		fmt.Printf("Received CMD: %v", cmd)
+	}
 }
