@@ -2,23 +2,18 @@ package main
 
 import (
 	"github.com/howeyc/fsnotify"
+	"os/exec"
 	"path"
 )
 
-type Cmd struct {
-	Path      string
-	EventType string
-	EventFile string
-}
-
-func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *Cmd) {
-	queue = make(chan *Cmd)
+func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cmd) {
+	queue = make(chan *exec.Cmd)
 
 	go func() {
 		for ev := range events {
 			rule := ruleForEvent(rules, ev)
 			if rule != nil {
-				cmd := &Cmd{rule.Run, getEventType(ev), ev.Name}
+				cmd := exec.Command(rule.Run, getEventType(ev), ev.Name)
 				queue <- cmd
 			}
 		}
