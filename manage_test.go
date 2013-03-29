@@ -4,22 +4,23 @@ import (
 	"testing"
 )
 
+var matchTests = []struct {
+	rulePath, eventPath string
+	match               bool
+}{
+	{"/a/b", "/a/b/z.txt", true},
+	{"/a/b", "/a/c/z.txt", false},
+	{"/a/b", "/a/b/d/z.txt", false},
+}
+
 func TestMatchingRule(t *testing.T) {
-	testingRule := &Rule{"/a/b", "/bin/date"}
-	rules := []*Rule{testingRule}
+	for _, tt := range matchTests {
+		rule := &Rule{tt.rulePath, "/bin/echo"}
+		rules := []*Rule{rule}
 
-	match := matchingRule(rules, "/a/b/z.txt")
-	if match == nil {
-		t.Fatal("Did not match the correct rule")
-	}
-
-	match = matchingRule(rules, "/a/c/z.txt")
-	if match != nil {
-		t.Fatal("Matched the wrong rule")
-	}
-
-	match = matchingRule(rules, "/a/b/d/z.txt")
-	if match != nil {
-		t.Fatal("Matched the wrong rule")
+		match := matchingRule(rules, tt.eventPath)
+		if (tt.match && match == nil) || (!tt.match && match != nil) {
+			t.Errorf("matchingRule(%v, %v) = %v, want %v", rules, tt.eventPath, match, tt.match)
+		}
 	}
 }
