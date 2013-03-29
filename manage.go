@@ -50,5 +50,5 @@ func getEventType(ev *fsnotify.FileEvent) string {
 	case ev.IsRename():
 		return "RENAME"
 	}
-	return nil
+	return ""
 }
