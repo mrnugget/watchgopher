@@ -6,6 +6,7 @@ import (
 
 var testRules = []Rule{
 	Rule{"/tmp/foo", "/usr/local/bar/foobar"},
+	Rule{"/tmp/foo", "/usr/local/foo/foobar"},
 	Rule{"/tmp/bar", "/usr/local/bar/barfoo"},
 }
 

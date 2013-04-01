@@ -26,10 +26,12 @@ func ParseConfig(path string) (rules []*Rule, err error) {
 
 	config := f.(map[string]interface{})
 	for path, v := range config {
-		attributes := v.(map[string]interface{})
-		run := attributes["run"].(string)
-		path = stripTrailingSlash(path)
-		rules = append(rules, &Rule{path, run})
+		for _, v = range v.([]interface{}) {
+			attributes := v.(map[string]interface{})
+			run := attributes["run"].(string)
+			path = stripTrailingSlash(path)
+			rules = append(rules, &Rule{path, run})
+		}
 	}
 
 	return rules, nil

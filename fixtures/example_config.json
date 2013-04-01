@@ -1,8 +1,9 @@
 {
-  "/tmp/foo": {
-    "run": "/usr/local/bar/foobar"
-  },
-  "/tmp/bar/": {
-    "run": "/usr/local/bar/barfoo"
-  }
+  "/tmp/foo": [
+    {"run": "/usr/local/bar/foobar"},
+    {"run": "/usr/local/foo/foobar"}
+  ],
+  "/tmp/bar/": [
+    {"run": "/usr/local/bar/barfoo"}
+  ]
 }
