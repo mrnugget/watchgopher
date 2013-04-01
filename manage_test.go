@@ -11,6 +11,8 @@ var matchTests = []struct {
 }{
 	{"/a/b", "*.txt", "/a/b/z.txt", true},
 	{"/a/b", "*.txt", "/a/c/z.txt", false},
+	{"/a/b", "*.txt", "/a/b/Z.TXT", false},
+	{"/a/b", "*.TXT", "/a/b/Z.TXT", true},
 	{"/a/b", "*.txt", "/a/b/d/z.txt", false},
 	{"/a/b", "*.jpg", "/a/b/z.txt", false},
 	{"/a/b", "*.jpg", "/a/b/z.jpg", true},
