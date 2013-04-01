@@ -26,9 +26,9 @@ func matchingRule(rules []*Rule, filepath string) (rule *Rule) {
 	dir, file := path.Split(filepath)
 	dir = stripTrailingSlash(dir)
 
-	for _, rule := range rules {
-		if rule.Path == dir && path.Ext(rule.Pattern) == path.Ext(file) {
-			return rule
+	for _, r := range rules {
+		if r.Path == dir && (r.Pattern == "*" || path.Ext(r.Pattern) == path.Ext(file)) {
+			return r
 		}
 	}
 	return nil
