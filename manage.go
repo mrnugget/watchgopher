@@ -23,11 +23,11 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cm
 }
 
 func matchingRule(rules []*Rule, filepath string) (rule *Rule) {
-	path, _ := path.Split(filepath)
-	path = stripTrailingSlash(path)
+	dir, file := path.Split(filepath)
+	dir = stripTrailingSlash(dir)
 
 	for _, rule := range rules {
-		if rule.Path == path {
+		if rule.Path == dir && path.Ext(rule.Pattern) == path.Ext(file) {
 			return rule
 		}
 	}

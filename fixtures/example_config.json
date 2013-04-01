@@ -1,9 +1,9 @@
 {
   "/tmp/foo": [
-    {"run": "/usr/local/bar/foobar"},
-    {"run": "/usr/local/foo/foobar"}
+    {"run": "/usr/local/bar/foobar", "pattern": "*.txt"},
+    {"run": "/usr/local/foo/foobar", "pattern": "*.zip"}
   ],
   "/tmp/bar/": [
-    {"run": "/usr/local/bar/barfoo"}
+    {"run": "/usr/local/bar/barfoo", "pattern": "*.jpg"}
   ]
 }

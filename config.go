@@ -6,8 +6,9 @@ import (
 )
 
 type Rule struct {
-	Path string
-	Run  string
+	Path    string
+	Run     string
+	Pattern string
 }
 
 func ParseConfig(path string) (rules []*Rule, err error) {
@@ -29,8 +30,9 @@ func ParseConfig(path string) (rules []*Rule, err error) {
 		for _, v = range v.([]interface{}) {
 			attributes := v.(map[string]interface{})
 			run := attributes["run"].(string)
+			pattern := attributes["pattern"].(string)
 			path = stripTrailingSlash(path)
-			rules = append(rules, &Rule{path, run})
+			rules = append(rules, &Rule{path, run, pattern})
 		}
 	}
 
