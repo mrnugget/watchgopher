@@ -4,15 +4,9 @@ import (
 	"testing"
 )
 
-type expectedRule map[string]string
-
-var expectedRules = map[string]expectedRule{
-	"/tmp/foo": map[string]string{
-		"run": "/usr/local/bar/foobar",
-	},
-	"/tmp/bar": map[string]string{
-		"run": "/usr/local/bar/barfoo",
-	},
+var testRules = []Rule{
+	Rule{"/tmp/foo", "/usr/local/bar/foobar"},
+	Rule{"/tmp/bar", "/usr/local/bar/barfoo"},
 }
 
 func TestParseConfig(t *testing.T) {
@@ -21,15 +15,17 @@ func TestParseConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	for _, rule := range rules {
-		expected, ok := expectedRules[rule.Path]
-		if !ok {
-			t.Error("Rule not found")
-			continue
+	for _, testRule := range testRules {
+		found := false
+
+		for _, rule := range rules {
+			if testRule.Path == rule.Path && testRule.Run == rule.Run {
+				found = true
+			}
 		}
-		if rule.Run != expected["run"] {
-			t.Error("Wrong Run. Expected: %v Actual: %v", expected["run"],
-				rule.Run)
+
+		if !found {
+			t.Errorf("Rule not found: %+v", testRule)
 		}
 	}
 }
