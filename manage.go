@@ -11,10 +11,12 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cm
 
 	go func() {
 		for ev := range events {
-			rule := matchingRule(rules, ev.Name)
-			if rule != nil {
-				cmd := exec.Command(rule.Run, getEventType(ev), ev.Name)
-				queue <- cmd
+			matches := matchingRules(rules, ev.Name)
+			if len(matches) > 0 {
+				for _, rule := range matches {
+					cmd := exec.Command(rule.Run, getEventType(ev), ev.Name)
+					queue <- cmd
+				}
 			}
 		}
 	}()
@@ -22,16 +24,18 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cm
 	return
 }
 
-func matchingRule(rules []*Rule, filepath string) (rule *Rule) {
+func matchingRules(rules []*Rule, filepath string) (matches []*Rule) {
+	matches = make([]*Rule, 0)
+
 	dir, file := path.Split(filepath)
 	dir = stripTrailingSlash(dir)
 
 	for _, r := range rules {
 		if r.Path == dir && (r.Pattern == "*" || path.Ext(r.Pattern) == path.Ext(file)) {
-			return r
+			matches = append(matches, r)
 		}
 	}
-	return nil
+	return matches
 }
 
 func getEventType(ev *fsnotify.FileEvent) string {

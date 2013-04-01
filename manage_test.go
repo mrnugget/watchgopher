@@ -19,14 +19,14 @@ var matchTests = []struct {
 	{"/a/b", "*", "/a/c/z.jpg", false},
 }
 
-func TestMatchingRule(t *testing.T) {
+func TestMatchingRules(t *testing.T) {
 	for _, tt := range matchTests {
 		rule := &Rule{tt.rulePath, "/bin/echo", tt.rulePattern}
 		rules := []*Rule{rule}
 
-		match := matchingRule(rules, tt.eventPath)
-		if (tt.match && match == nil) || (!tt.match && match != nil) {
-			t.Errorf("matchingRule(%+v, %v) = %v, want %v", rules, tt.eventPath, match, tt.match)
+		matches := matchingRules(rules, tt.eventPath)
+		if (tt.match && len(matches) == 0) || (!tt.match && len(matches) > 0) {
+			t.Errorf("(len(matchingRules(%+v, %v)) > 0) == %v, want %v", rules, tt.eventPath, len(matches) > 0, tt.match)
 		}
 	}
 }
