@@ -17,6 +17,11 @@ var matchTests = []struct {
 	{"/a/b", "*.jpg", "/a/b/z.jpeg", false},
 	{"/a/b", "*", "/a/b/z.jpg", true},
 	{"/a/b", "*", "/a/c/z.jpg", false},
+	{"/a/b", "IMG_12*.jpg", "/a/b/IMG_123.jpg", true},
+	{"/a/b", "IMG_13*.jpg", "/a/b/IMG_123.jpg", false},
+	{"/a/b", "*_chapter.md", "/a/b/1st_chapter.md", true},
+	{"/a/b", "*_chapter.md", "/a/b/1.chapter.md", false},
+	{"/a/b", "1st_chapter.md", "/a/b/1st_chapter.md", true},
 }
 
 func TestMatchingRules(t *testing.T) {

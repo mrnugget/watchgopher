@@ -4,6 +4,7 @@ import (
 	"github.com/howeyc/fsnotify"
 	"os/exec"
 	"path"
+	"path/filepath"
 )
 
 func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cmd) {
@@ -24,16 +25,25 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cm
 	return
 }
 
-func matchingRules(rules []*Rule, filepath string) (matches []*Rule) {
+func matchingRules(rules []*Rule, filename string) (matches []*Rule) {
 	matches = make([]*Rule, 0)
 
-	dir, file := path.Split(filepath)
+	dir, file := path.Split(filename)
 	dir = stripTrailingSlash(dir)
 
 	for _, r := range rules {
-		if r.Path == dir && (r.Pattern == "*" || path.Ext(r.Pattern) == path.Ext(file)) {
-			matches = append(matches, r)
+		if r.Path == dir {
+			if r.Pattern == "*"  {
+				matches = append(matches, r)
+				continue
+			}
+
+			match, err := filepath.Match(r.Pattern, file)
+			if r.Path == dir && match && err == nil {
+				matches = append(matches, r)
+			}
 		}
+
 	}
 	return matches
 }
