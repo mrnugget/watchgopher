@@ -16,7 +16,7 @@ func main() {
 
 	rules, err := ParseConfig(configPath)
 	if err != nil {
-		log.Fatal("ERROR: Could not parse config file")
+		log.Fatalf("ERROR: Could not parse config file: %s", err)
 	}
 	log.Printf("Successfully loaded configuration file. Number of rules: %d", len(rules))
 
