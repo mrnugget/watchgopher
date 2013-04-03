@@ -48,6 +48,6 @@ func main() {
 			log.Printf("%s, ARGS: %s, -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
 			continue
 		}
-		log.Printf("%s, ARGS: %s, -- SUCCESS\n", cmd.Path, cmd.Args[1:])
+		log.Printf("%s, ARGS: %s -- SUCCESS\n", cmd.Path, cmd.Args[1:])
 	}
 }
