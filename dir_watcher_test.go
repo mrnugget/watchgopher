@@ -15,6 +15,12 @@ func TestEvents(t *testing.T) {
 
 	watcher, err := WatchDirs(dirs)
 	checkErr(t, err)
+	defer func() {
+		err = watcher.Stop()
+		if err != nil {
+			t.Fatalf("watcher.Stop() error: %s", err)
+		}
+	}()
 
 	// Rewrite file to trigger Modify event
 	content, err := ioutil.ReadFile(sub1 + "/foobar.txt")
@@ -22,19 +28,9 @@ func TestEvents(t *testing.T) {
 	err = ioutil.WriteFile(sub1+"/foobar.txt", content, 0644)
 	checkErr(t, err)
 
-	ev := <-watcher.Events
-	if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
-		t.Fatalf("Wrong event: %s", ev)
-	}
-
 	// Create file to trigger create event
 	err = ioutil.WriteFile(sub2+"/hello.txt", []byte("Hello World!"), 0644)
 	checkErr(t, err)
-
-	ev = <-watcher.Events
-	if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
-		t.Fatalf("Wrong event: %s", ev)
-	}
 
 	time.Sleep(1 * time.Millisecond)
 
@@ -42,12 +38,27 @@ func TestEvents(t *testing.T) {
 	err = os.Remove(sub2 + "/hello.txt")
 	checkErr(t, err)
 
-	ev = <-watcher.Events
-	if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
-		t.Fatalf("Wrong event: %s", ev)
-	}
+	done := make(chan bool)
 
-	watcher.Stop()
+	go func() {
+		ev := <-watcher.Events
+		if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
+			t.Fatalf("Wrong event: %s", ev)
+		}
+
+		ev = <-watcher.Events
+		if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
+			t.Fatalf("Wrong event: %s", ev)
+		}
+
+		ev = <-watcher.Events
+		if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
+			t.Fatalf("Wrong event: %s", ev)
+		}
+		done <- true
+	}()
+
+	<-done
 }
 
 func checkErr(t *testing.T, err error) {
