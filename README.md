@@ -1,5 +1,4 @@
-Watchgopher
-===========
+# Watchgopher [![Build Status](https://travis-ci.org/mrnugget/watchgopher.png)]
 
 Watchgopher listens to file events in directories and dispatches these events
 (including event type and file) to commands of your choice to handle them.
@@ -42,7 +41,6 @@ $ watchgopher tmp/watchgopher.json
 Watchgopher is now watching over those two directories and dispatch events if
 anything happens in them!
 
-
 Whenever a file event is triggered in any of the watched directories,
 Watchgopher will dispatch this event to the defined commands (`"run"`) with **two
 arguments**:
@@ -68,8 +66,10 @@ The basic pattern of a Watchgopher configuration file is this:
   ],
   "[PATH OF DIRECTORY TO WATCH]": [
     {"run": "[PATH OF COMMAND HANDLING THE EVENT]", "pattern": "[FILE NAME PATTERN]"},
-    {"run": "[PATH OF COMMAND HANDLING THE EVENT]", "pattern": "[FILE NAME PATTERN]"}
-  ]
+    {"run": "[PATH OF COMMAND HANDLING THE EVENT]", "pattern": "[FILE NAME PATTERN]"},
+    ...
+  ],
+  ...
 }
 ```
 
@@ -93,3 +93,7 @@ Watchgopher will dispatch the event to the defined command (`"run"`).
 
 Thanks to [howeyc](https://github.com/howeyc) for building the
 [fsnotify](https://github.com/howeyc/fsnotify) package.
+
+## License
+
+MIT, see [LICENSE](LICENSE)
