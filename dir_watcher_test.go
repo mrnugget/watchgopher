@@ -32,33 +32,35 @@ func TestEvents(t *testing.T) {
 	err = ioutil.WriteFile(sub2+"/hello.txt", []byte("Hello World!"), 0644)
 	checkErr(t, err)
 
-	time.Sleep(1 * time.Millisecond)
+	// Wait for filesystem to sync changes
+	time.Sleep(20 * time.Millisecond)
 
 	// Remove newly created file
 	err = os.Remove(sub2 + "/hello.txt")
 	checkErr(t, err)
 
-	done := make(chan bool)
 
-	go func() {
-		ev := <-watcher.Events
-		if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
-			t.Fatalf("Wrong event: %s", ev)
-		}
+	// Wait again to make sure all triggered events are queued up
+	time.Sleep(20 * time.Millisecond)
+	eventslen := len(watcher.Events)
+	if eventslen != 3 {
+		t.Fatalf("len(watcher.Events) = %s, wanted %s", eventslen, 3)
+	}
 
-		ev = <-watcher.Events
-		if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
-			t.Fatalf("Wrong event: %s", ev)
-		}
+	ev := <-watcher.Events
+	if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
+		t.Fatalf("Wrong event: %s", ev)
+	}
 
-		ev = <-watcher.Events
-		if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
-			t.Fatalf("Wrong event: %s", ev)
-		}
-		done <- true
-	}()
+	ev = <-watcher.Events
+	if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
+		t.Fatalf("Wrong event: %s", ev)
+	}
 
-	<-done
+	ev = <-watcher.Events
+	if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
+		t.Fatalf("Wrong event: %s", ev)
+	}
 }
 
 func checkErr(t *testing.T, err error) {
