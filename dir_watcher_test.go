@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -16,12 +15,6 @@ func TestEvents(t *testing.T) {
 
 	watcher, err := WatchDirs(dirs)
 	checkErr(t, err)
-	defer func() {
-		err = watcher.Stop()
-		if err != nil {
-			t.Fatalf("watcher.Stop() error: %s", err)
-		}
-	}()
 
 	// Rewrite file to trigger Modify event
 	content, err := ioutil.ReadFile(sub1 + "/foobar.txt")
@@ -29,44 +22,38 @@ func TestEvents(t *testing.T) {
 	err = ioutil.WriteFile(sub1+"/foobar.txt", content, 0644)
 	checkErr(t, err)
 
+	time.Sleep(500 * time.Millisecond)
+
+	ev := <-watcher.Events
+	if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
+		t.Fatalf("Wrong event: %s", ev)
+	}
+
+	time.Sleep(500 * time.Millisecond)
+
 	// Create file to trigger create event
 	err = ioutil.WriteFile(sub2+"/hello.txt", []byte("Hello World!"), 0644)
 	checkErr(t, err)
 
-	// Wait for filesystem to sync changes
-	time.Sleep(20 * time.Millisecond)
+	ev = <-watcher.Events
+	if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
+		t.Fatalf("Wrong event: %s", ev)
+	}
+
+	time.Sleep(500 * time.Millisecond)
 
 	// Remove newly created file
 	err = os.Remove(sub2 + "/hello.txt")
 	checkErr(t, err)
 
+	time.Sleep(1 * time.Millisecond)
 
-	// Wait again to make sure all triggered events are queued up
-	time.Sleep(20 * time.Millisecond)
-	// eventslen := len(watcher.Events)
-	// if eventslen != 3 {
-	// 	t.Fatalf("len(watcher.Events) = %s, wanted %s", eventslen, 3)
-	// }
-
-	for i := 0; i < len(watcher.Events); i++ {
-		ev := <-watcher.Events
-		fmt.Printf("Event: %s\n", ev)
-
+	ev = <-watcher.Events
+	if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
+		t.Fatalf("Wrong event: %s", ev)
 	}
-	// ev := <-watcher.Events
-	// if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
-	// 	t.Fatalf("Wrong event: %s", ev)
-	// }
 
-	// ev = <-watcher.Events
-	// if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
-	// 	t.Fatalf("Wrong event: %s", ev)
-	// }
-
-	// ev = <-watcher.Events
-	// if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
-	// 	t.Fatalf("Wrong event: %s", ev)
-	// }
+	watcher.Stop()
 }
 
 func checkErr(t *testing.T, err error) {
