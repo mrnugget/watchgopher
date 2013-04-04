@@ -24,7 +24,7 @@ func TestEvents(t *testing.T) {
 
 	ev := <-watcher.Events
 	if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
-		t.Fatal("Wrong event")
+		t.Fatalf("Wrong event: %s", ev)
 	}
 
 	// Create file to trigger create event
