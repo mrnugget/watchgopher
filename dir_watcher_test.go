@@ -48,7 +48,7 @@ func TestEvents(t *testing.T) {
 	// 	t.Fatalf("len(watcher.Events) = %s, wanted %s", eventslen, 3)
 	// }
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < len(watcher.Events); i++ {
 		ev := <-watcher.Events
 		fmt.Printf("Event: %s\n", ev)
 
