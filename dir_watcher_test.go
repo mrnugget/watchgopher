@@ -25,14 +25,14 @@ func TestEvents(t *testing.T) {
 	f.Sync()
 	f.Close()
 
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	ev := <-watcher.Events
 	if !ev.IsModify() && ev.Name != sub1+"/foobar.txt" {
 		t.Fatalf("Wrong event: %s", ev)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	// Create file to trigger create event
 	err = ioutil.WriteFile(sub2+"/hello.txt", []byte("Hello World!"), 0644)
@@ -43,7 +43,7 @@ func TestEvents(t *testing.T) {
 		t.Fatalf("Wrong event: %s", ev)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	// Remove newly created file
 	err = os.Remove(sub2 + "/hello.txt")
