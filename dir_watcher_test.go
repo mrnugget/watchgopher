@@ -33,7 +33,7 @@ func TestEvents(t *testing.T) {
 
 	ev = <-watcher.Events
 	if !ev.IsCreate() && ev.Name != sub2+"/hello.txt" {
-		t.Fatal("Wrong event")
+		t.Fatalf("Wrong event: %s", ev)
 	}
 
 	time.Sleep(1 * time.Millisecond)
@@ -44,7 +44,7 @@ func TestEvents(t *testing.T) {
 
 	ev = <-watcher.Events
 	if !ev.IsDelete() && ev.Name != sub2+"/hello.txt" {
-		t.Fatal("Wrong event")
+		t.Fatalf("Wrong event: %s", ev)
 	}
 
 	watcher.Stop()
