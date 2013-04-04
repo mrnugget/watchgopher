@@ -1,4 +1,4 @@
-# Watchgopher [![Build Status](https://travis-ci.org/mrnugget/watchgopher.png)]
+# Watchgopher [![Build Status](https://travis-ci.org/mrnugget/watchgopher.png)](https://travis-ci.org/mrnugget/watchgopher)
 
 Watchgopher listens to file events in directories and dispatches these events
 (including event type and file) to commands of your choice to handle them.
