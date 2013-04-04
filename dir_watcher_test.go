@@ -16,11 +16,14 @@ func TestEvents(t *testing.T) {
 	watcher, err := WatchDirs(dirs)
 	checkErr(t, err)
 
-	// Rewrite file to trigger Modify event
-	content, err := ioutil.ReadFile(sub1 + "/foobar.txt")
+	// Change content of file to trigger Modify event
+	f, err := os.OpenFile(sub1+"/foobar.txt", os.O_WRONLY, 0666)
 	checkErr(t, err)
-	err = ioutil.WriteFile(sub1+"/foobar.txt", content, 0644)
-	checkErr(t, err)
+	f.Sync()
+	time.Sleep(time.Millisecond)
+	f.WriteString("Hello")
+	f.Sync()
+	f.Close()
 
 	time.Sleep(500 * time.Millisecond)
 
