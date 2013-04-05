@@ -3,62 +3,57 @@
 Watchgopher listens to file events in directories and dispatches these events
 (including event type and file) to commands of your choice to handle them.
 
-## Installation
+## Getting Started
 
-Make sure you have [Go](http://golang.org/) running on your system and setup.
-Then use the `go` command to install Watchgopher:
+1. Make sure you have [Go](http://golang.org/) running on your system and setup.
+   Then use the `go` command to install Watchgopher:
 
-    go get -u github.com/mrnugget/watchgopher
+    `$ go get -u github.com/mrnugget/watchgopher`
 
-The `watchgopher` command should now be available to you.
+2. Create a configuration file for Watchgopher to use. Modify this example to
+   your needs and save it:
+
+   ```
+   {
+      "/Users/mrnugget/Downloads": [
+         {"run": "/Users/mrnugget/bin/unzipper.rb", "pattern": "*.zip"}
+      ]
+   }
+   ```
+
+3. Make sure the specified directory to watch exists and the command is
+   executable. Then point watchgopher to your newly created configuration file:
+  
+    `$ watchgopher watchgopher_config.json`
+
+Watchgopher is now keeping track of all files in the `/Users/mrnugget/Downloads`
+directory. As soon as something happens to a file, whose name matches the
+specified pattern, Watchgopher will pass the type of the event and the absolute
+path to the file to the specified command.
+
+Creating a new `*.zip` file in `/Users/mrnugget/Downloads` will follow in
+Watchgopher calling this command: 
+
+  `/Users/mrnugget/bin/unzipper.rb CREATE /Users/mrnugget/Downloads/new.zip`
 
 ## Usage
 
-Before starting Watchgopher you need a configuration file to use. Modify this
-example to your needs:
-
-```json
-{
-  "/Users/mrnugget/tmp": [
-    {"run": "/Users/mrnugget/bin/ruby_run.rb", "pattern": "*"},
-    {"run": "/Users/mrnugget/bin/shell_run.sh", "pattern": "*.zip"}
-  ],
-  "/Users/mrnugget/Downloads": [
-    {"run": "/Users/mrnugget/bin/gif_archiver", "pattern": "*.gif"}
-  ]
-}
-```
-
-Now point the `watchgopher` executable to this configuration file
-and see it load up:
-
-```bash
-$ watchgopher tmp/watchgopher.json
-2013/04/03 08:54:29 Successfully loaded configuration file. Number of rules: 3
-2013/04/03 08:54:29 Watchgopher is now ready process file events
-```
-
-Watchgopher is now watching over those two directories and dispatch events if
-anything happens in them!
-
-Whenever a file event is triggered in any of the watched directories,
-Watchgopher will dispatch this event to the defined commands (`"run"`) with **two
-arguments**:
+Watchgopher will pass two arguments to every specified command, should a file
+event happen whose filename matches the specified pattern. Those two arguments
+will be:
 
 1. Type of the event (`CREATE`, `MODIFY`, `DELETE` or `RENAME`)
 2. Absolute path of the file triggering the event
 
-Watchgopher will output the following after successfully dispatching an event:
-
-    2013/04/03 08:58:11 /Users/mrnugget/bin/gif_archiver, ARGS: [CREATE /Users/mrnugget/Downloads/otter.gif] -- SUCCESS
-
-Well done!
+To properly use Watchgopher, your specified commands should take care of those
+arguments and act accordingly. What those scripts will do is entirely up to
+them.
 
 ## Configuration
 
 The basic pattern of a Watchgopher configuration file is this:
 
-```json
+```
 {
   "[PATH OF DIRECTORY TO WATCH]": [
     {"run": "[PATH OF COMMAND HANDLING THE EVENT]", "pattern": "[FILE NAME PATTERN]"},
