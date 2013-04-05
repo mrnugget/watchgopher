@@ -45,7 +45,7 @@ func main() {
 	for cmd := range queue {
 		err = cmd.Run()
 		if err != nil {
-			log.Printf("%s, ARGS: %s, -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+			log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
 			continue
 		}
 		log.Printf("%s, ARGS: %s -- SUCCESS\n", cmd.Path, cmd.Args[1:])
