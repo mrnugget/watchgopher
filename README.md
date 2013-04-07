@@ -74,7 +74,9 @@ several rules**.
 
 Every **rule** requires two attributes:
 
-1. **"run"**: Absolute path to command which will handle the event
+1. **"run"**: Absolute path to command which will handle the event. If the
+   command is in your `$PATH` you won't need to provide the absolute path, just
+   the name of the command.
 2. **"pattern"**: Defines which pattern a filename of an event has to match in
    order to get dispatched to he **"run"** command. [See
    this](http://golang.org/pkg/path/filepath/#Match) for an explanation of possible
