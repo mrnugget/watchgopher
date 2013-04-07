@@ -68,21 +68,22 @@ The basic pattern of a Watchgopher configuration file is this:
 }
 ```
 
-Basic explanation:
+`[PATH OF DIRECTORY TO WATCH]` is the absolute path of a directory which
+Watchgopher should keep track of. **Every defined defined directory can have
+several rules**.
 
-1. `[PATH OF DIRECTORY TO WATCH]`: Absolute path to the directory to watch
-2. `[PATH OF COMMAND HANDLING THE EVENT]`: Absolute path to command
-3. `[FILE NAME PATTERN]`: Only dispatch events to the defined command if the
-   file name matches this pattern. [See this](http://golang.org/pkg/path/filepath/#Match) for an explanation of possible
+Every **rule** requires two attributes:
+
+1. **"run"**: Absolute path to command which will handle the event
+2. **"pattern"**: Defines which pattern a filename of an event has to match in
+   order to get dispatched to he **"run"** command. [See
+   this](http://golang.org/pkg/path/filepath/#Match) for an explanation of possible
    patterns.
-
-**Every watched directory can have several rules (`{"run":"[...]", "pattern":"[...]"}`)
-defined.**
 
 Whenever an event is triggered in a directory, watchgopher checks which rules
 apply to this event (by checking against the `"pattern"`). If a rule applies,
-because the defined pattern matches the file events absolute filename,
-Watchgopher will dispatch the event to the defined command (`"run"`).
+because the defined pattern matches the file events filename, Watchgopher will
+dispatch the event to the defined command (`"run"`).
 
 ## Thanks
 
