@@ -43,6 +43,7 @@ func main() {
 	log.Println("Watchgopher is now ready process file events")
 
 	for cmd := range queue {
+		cmd.Stdout = os.Stdout
 		err = cmd.Run()
 		if err != nil {
 			log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
