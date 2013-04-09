@@ -11,10 +11,10 @@ type Rule struct {
 	Pattern string
 }
 
-func ParseConfig(path string) (rules []*Rule, err error) {
+func ParseConfig(configpath string) (rules []*Rule, err error) {
 	rules = make([]*Rule, 0)
 
-	c, err := ioutil.ReadFile(path)
+	c, err := ioutil.ReadFile(configpath)
 	if err != nil {
 		return nil, err
 	}
@@ -25,18 +25,22 @@ func ParseConfig(path string) (rules []*Rule, err error) {
 		return nil, err
 	}
 
-	config := f.(map[string]interface{})
-	for path, v := range config {
-		for _, v = range v.([]interface{}) {
-			attributes := v.(map[string]interface{})
-			run := attributes["run"].(string)
-			pattern := attributes["pattern"].(string)
-			path = stripTrailingSlash(path)
-			rules = append(rules, &Rule{path, run, pattern})
+	paths := f.(map[string]interface{})
+	for path, pathRules := range paths {
+		for _, ruleAttributes := range pathRules.([]interface{}) {
+			attributes := ruleAttributes.(map[string]interface{})
+			rules = append(rules, attributesToRule(path, attributes))
 		}
 	}
 
 	return rules, nil
+}
+
+func attributesToRule(p string, attr map[string]interface{}) *Rule {
+	run := attr["run"].(string)
+	pattern := attr["pattern"].(string)
+
+	return &Rule{stripTrailingSlash(p), run, pattern}
 }
 
 func stripTrailingSlash(path string) string {
