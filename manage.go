@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"github.com/howeyc/fsnotify"
+	"io"
+	"log"
 	"os/exec"
 	"path"
 	"path/filepath"
@@ -16,6 +19,24 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan *exec.Cm
 			if len(matches) > 0 {
 				for _, rule := range matches {
 					cmd := exec.Command(rule.Run, getEventType(ev), ev.Name)
+
+					outp, err := cmd.StdoutPipe()
+					if err != nil {
+						log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+						continue
+					}
+
+					errp, err := cmd.StderrPipe()
+					if err != nil {
+						log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+						continue
+					}
+
+					_, filename := path.Split(cmd.Path)
+
+					go pipeToLog(filename, "STDOUT", outp)
+					go pipeToLog(filename, "STDERR", errp)
+
 					queue <- cmd
 				}
 			}
@@ -60,4 +81,18 @@ func getEventType(ev *fsnotify.FileEvent) string {
 		return "RENAME"
 	}
 	return ""
+}
+
+func pipeToLog(filename, prefix string, pipe io.ReadCloser) {
+	reader := bufio.NewReader(pipe)
+	for {
+		line, err := reader.ReadBytes('\n')
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("[%s %s] Reading Error: %s", filename, prefix, err)
+		}
+		log.Printf("[%s %s] %s", filename, prefix, line)
+	}
 }
