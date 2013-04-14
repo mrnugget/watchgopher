@@ -16,7 +16,11 @@ Watchgopher listens to file events in directories and dispatches these events
    ```
    {
       "/Users/mrnugget/Downloads": [
-         {"run": "/Users/mrnugget/bin/unzipper.rb", "pattern": "*.zip"}
+         {
+           "run": "/Users/mrnugget/bin/unzipper.rb",
+           "pattern": "*.zip",
+           "log_output": true
+         }
       ]
    }
    ```
