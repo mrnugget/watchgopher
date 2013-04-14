@@ -5,9 +5,9 @@ import (
 )
 
 var testRules = []Rule{
-	Rule{"/tmp/foo", "/usr/local/bar/foobar", "*.txt"},
-	Rule{"/tmp/foo", "/usr/local/foo/foobar", "*.zip"},
-	Rule{"/tmp/bar", "/usr/local/bar/barfoo", "*.jpg"},
+	Rule{"/tmp/foo", "/usr/local/bar/foobar", "*.txt", false},
+	Rule{"/tmp/foo", "/usr/local/foo/foobar", "*.zip", true},
+	Rule{"/tmp/bar", "/usr/local/bar/barfoo", "*.jpg", false},
 }
 
 func TestParseConfig(t *testing.T) {

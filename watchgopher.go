@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
+	"io"
 	"log"
 	"os"
+	"path"
 )
 
 func main() {
@@ -42,12 +45,59 @@ func main() {
 
 	log.Println("Watchgopher is now ready process file events")
 
-	for cmd := range queue {
-		err = cmd.Run()
+	for payload := range queue {
+		workOff(payload)
+	}
+}
+
+func workOff(pl CmdPayload) {
+	cmd := pl.Cmd
+
+	if pl.LogOutput {
+		outp, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
-			continue
+			return
 		}
-		log.Printf("%s, ARGS: %s -- SUCCESS\n", cmd.Path, cmd.Args[1:])
+
+		errp, err := cmd.StderrPipe()
+		if err != nil {
+			log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+			return
+		}
+
+		_, filename := path.Split(cmd.Path)
+		go pipeToLog(filename, "STDOUT", outp)
+		go pipeToLog(filename, "STDERR", errp)
+	}
+
+	log.Printf("%s, ARGS: %s -- START\n", cmd.Path, cmd.Args[1:])
+
+	if err := cmd.Start(); err != nil {
+		log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+		return
+	}
+
+	err := cmd.Wait()
+	if err != nil {
+		log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+		return
+	}
+	log.Printf("%s, ARGS: %s -- SUCCESS\n", cmd.Path, cmd.Args[1:])
+
+}
+
+func pipeToLog(filename, prefix string, pipe io.ReadCloser) {
+	reader := bufio.NewReader(pipe)
+	for {
+		line, err := reader.ReadBytes('\n')
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("[%s %s] Reading Error: %s", filename, prefix, err)
+			break
+		}
+		log.Printf("[%s %s] %s", filename, prefix, line)
 	}
 }

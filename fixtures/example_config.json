@@ -1,7 +1,15 @@
 {
   "/tmp/foo": [
-    {"run": "/usr/local/bar/foobar", "pattern": "*.txt"},
-    {"run": "/usr/local/foo/foobar", "pattern": "*.zip"}
+    {
+      "run": "/usr/local/bar/foobar",
+      "pattern": "*.txt",
+      "log_output": false
+    },
+    {
+      "run": "/usr/local/foo/foobar",
+      "pattern": "*.zip",
+      "log_output": true
+    }
   ],
   "/tmp/bar/": [
     {"run": "/usr/local/bar/barfoo", "pattern": "*.jpg"}
