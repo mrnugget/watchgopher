@@ -58,18 +58,22 @@ func workOff(pl CmdPayload) {
 		outp, err := cmd.StdoutPipe()
 		if err != nil {
 			logCmdErr(cmd, err)
-			return
 		}
 
 		errp, err := cmd.StderrPipe()
 		if err != nil {
 			logCmdErr(cmd, err)
-			return
 		}
 
 		_, filename := path.Split(cmd.Path)
-		go pipeToLog(filename, "STDOUT", outp)
-		go pipeToLog(filename, "STDERR", errp)
+
+		if outp != nil {
+			go pipeToLog(filename, "STDOUT", outp)
+		}
+
+		if errp != nil {
+			go pipeToLog(filename, "STDERR", errp)
+		}
 	}
 
 	log.Printf("%s, ARGS: %s -- START\n", cmd.Path, cmd.Args[1:])
