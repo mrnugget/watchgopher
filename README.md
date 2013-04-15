@@ -55,7 +55,7 @@ them.
 
 ## Configuration
 
-The basic pattern of a Watchgopher configuration file is this:
+The basic, required pattern of a Watchgopher configuration file is this:
 
 ```
 {
@@ -73,8 +73,9 @@ The basic pattern of a Watchgopher configuration file is this:
 ```
 
 `[PATH OF DIRECTORY TO WATCH]` is the absolute path of a directory which
-Watchgopher should keep track of. **Every defined directory can have
-several rules**.
+Watchgopher should keep track of.
+
+**Every defined directory can have several rules**.
 
 Every **rule** requires two attributes:
 
