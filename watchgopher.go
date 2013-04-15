@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"path"
 )
 
@@ -56,13 +57,13 @@ func workOff(pl CmdPayload) {
 	if pl.LogOutput {
 		outp, err := cmd.StdoutPipe()
 		if err != nil {
-			log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+			logCmdErr(cmd, err)
 			return
 		}
 
 		errp, err := cmd.StderrPipe()
 		if err != nil {
-			log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+			logCmdErr(cmd, err)
 			return
 		}
 
@@ -74,13 +75,13 @@ func workOff(pl CmdPayload) {
 	log.Printf("%s, ARGS: %s -- START\n", cmd.Path, cmd.Args[1:])
 
 	if err := cmd.Start(); err != nil {
-		log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+		logCmdErr(cmd, err)
 		return
 	}
 
 	err := cmd.Wait()
 	if err != nil {
-		log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
+		logCmdErr(cmd, err)
 		return
 	}
 	log.Printf("%s, ARGS: %s -- SUCCESS\n", cmd.Path, cmd.Args[1:])
@@ -100,4 +101,8 @@ func pipeToLog(filename, prefix string, pipe io.ReadCloser) {
 		}
 		log.Printf("[%s %s] %s", filename, prefix, line)
 	}
+}
+
+func logCmdErr(cmd *exec.Cmd, err error) {
+	log.Printf("%s, ARGS: %s -- ERROR: %s\n", cmd.Path, cmd.Args[1:], err)
 }
