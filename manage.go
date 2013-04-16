@@ -46,7 +46,7 @@ func matchingRules(rules []*Rule, filename string) (matches []*Rule) {
 			}
 
 			match, err := filepath.Match(r.Pattern, file)
-			if r.Path == dir && match && err == nil {
+			if match && err == nil {
 				matches = append(matches, r)
 			}
 		}

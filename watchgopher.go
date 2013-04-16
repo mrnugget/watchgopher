@@ -89,7 +89,6 @@ func workOff(pl CmdPayload) {
 		return
 	}
 	log.Printf("%s, ARGS: %s -- SUCCESS\n", cmd.Path, cmd.Args[1:])
-
 }
 
 func pipeToLog(filename, prefix string, pipe io.ReadCloser) {
