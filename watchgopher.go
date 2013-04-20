@@ -52,20 +52,18 @@ func main() {
 }
 
 func workOff(pl CmdPayload) {
-	cmd := pl.Cmd
-
 	if pl.LogOutput {
-		outp, err := cmd.StdoutPipe()
+		outp, err := pl.Cmd.StdoutPipe()
 		if err != nil {
-			logCmdErr(cmd, err)
+			logCmdErr(pl.Cmd, err)
 		}
 
-		errp, err := cmd.StderrPipe()
+		errp, err := pl.Cmd.StderrPipe()
 		if err != nil {
-			logCmdErr(cmd, err)
+			logCmdErr(pl.Cmd, err)
 		}
 
-		_, filename := path.Split(cmd.Path)
+		_, filename := path.Split(pl.Cmd.Path)
 
 		if outp != nil {
 			go pipeToLog(filename, "STDOUT", outp)
@@ -76,19 +74,19 @@ func workOff(pl CmdPayload) {
 		}
 	}
 
-	log.Printf("%s, ARGS: %s -- START\n", cmd.Path, cmd.Args[1:])
+	log.Printf("%s, ARGS: %s -- START\n", pl.Cmd.Path, pl.Cmd.Args[1:])
 
-	if err := cmd.Start(); err != nil {
-		logCmdErr(cmd, err)
+	if err := pl.Cmd.Start(); err != nil {
+		logCmdErr(pl.Cmd, err)
 		return
 	}
 
-	err := cmd.Wait()
+	err := pl.Cmd.Wait()
 	if err != nil {
-		logCmdErr(cmd, err)
+		logCmdErr(pl.Cmd, err)
 		return
 	}
-	log.Printf("%s, ARGS: %s -- SUCCESS\n", cmd.Path, cmd.Args[1:])
+	log.Printf("%s, ARGS: %s -- SUCCESS\n", pl.Cmd.Path, pl.Cmd.Args[1:])
 }
 
 func pipeToLog(filename, prefix string, pipe io.ReadCloser) {
