@@ -29,7 +29,7 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan CmdPaylo
 		}
 	}()
 
-	return
+	return queue
 }
 
 func matchingRules(rules []*Rule, filename string) (matches []*Rule) {
