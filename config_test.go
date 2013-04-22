@@ -5,9 +5,9 @@ import (
 )
 
 var testRules = []Rule{
-	Rule{"/tmp/foo", "/usr/local/bar/foobar", "*.txt", false},
-	Rule{"/tmp/foo", "/usr/local/foo/foobar", "*.zip", true},
-	Rule{"/tmp/bar", "/usr/local/bar/barfoo", "*.jpg", false},
+	Rule{"/tmp/foo", "/usr/local/bar/foobar", "*.txt", false, false},
+	Rule{"/tmp/foo", "/usr/local/foo/foobar", "*.zip", true, true},
+	Rule{"/tmp/bar", "/usr/local/bar/barfoo", "*.jpg", false, false},
 }
 
 func TestParseConfig(t *testing.T) {
@@ -20,9 +20,10 @@ func TestParseConfig(t *testing.T) {
 		found := false
 
 		for _, rule := range rules {
-			if testRule.Path == rule.Path && testRule.Run == rule.Run {
-				found = true
-			}
+			found = found || (testRule.Path == rule.Path &&
+			testRule.Run == rule.Run &&
+			testRule.Pattern == rule.Pattern &&
+			testRule.ChangePwd == rule.ChangePwd)
 		}
 
 		if !found {

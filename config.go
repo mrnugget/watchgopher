@@ -10,6 +10,7 @@ type Rule struct {
 	Run       string
 	Pattern   string
 	LogOutput bool
+	ChangePwd bool
 }
 
 func ParseConfig(configpath string) (rules []*Rule, err error) {
@@ -46,7 +47,12 @@ func attributesToRule(p string, attr map[string]interface{}) *Rule {
 		log = attr["log_output"].(bool)
 	}
 
-	return &Rule{stripTrailingSlash(p), run, pattern, log}
+	changePwd := false
+	if attr["change_pwd"] != nil {
+		changePwd = attr["change_pwd"].(bool)
+	}
+
+	return &Rule{stripTrailingSlash(p), run, pattern, log, changePwd}
 }
 
 func stripTrailingSlash(path string) string {

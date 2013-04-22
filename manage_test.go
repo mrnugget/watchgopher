@@ -29,7 +29,7 @@ var matchTests = []struct {
 
 func TestMatchingRules(t *testing.T) {
 	for _, tt := range matchTests {
-		rule := &Rule{tt.rulePath, "/bin/echo", tt.rulePattern, false}
+		rule := &Rule{tt.rulePath, "/bin/echo", tt.rulePattern, false, false}
 		rules := []*Rule{rule}
 
 		matches := matchingRules(rules, tt.eventPath)

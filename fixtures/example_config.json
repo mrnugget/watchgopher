@@ -3,12 +3,14 @@
     {
       "run": "/usr/local/bar/foobar",
       "pattern": "*.txt",
-      "log_output": false
+      "log_output": false,
+      "change_pwd": false
     },
     {
       "run": "/usr/local/foo/foobar",
       "pattern": "*.zip",
-      "log_output": true
+      "log_output": true,
+      "change_pwd": true
     }
   ],
   "/tmp/bar/": [

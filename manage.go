@@ -21,6 +21,13 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan CmdPaylo
 			if len(matches) > 0 {
 				for _, rule := range matches {
 					cmd := exec.Command(rule.Run, getEventType(ev), ev.Name)
+
+					if rule.ChangePwd {
+						dir, _ := path.Split(ev.Name)
+						dir = stripTrailingSlash(dir)
+						cmd.Dir = dir
+					}
+
 					payload := CmdPayload{cmd, rule.LogOutput}
 
 					queue <- payload
