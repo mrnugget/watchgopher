@@ -1,6 +1,7 @@
 package main
 
 import (
+	"path"
 	"testing"
 )
 
@@ -32,7 +33,10 @@ func TestMatchingRules(t *testing.T) {
 		rule := &Rule{tt.rulePath, "/bin/echo", tt.rulePattern, false, false}
 		rules := []*Rule{rule}
 
-		matches := matchingRules(rules, tt.eventPath)
+		dir, file := path.Split(tt.eventPath)
+		dir = stripTrailingSlash(dir)
+
+		matches := matchingRules(rules, dir, file)
 		if (tt.match && len(matches) == 0) || (!tt.match && len(matches) > 0) {
 			t.Errorf("(len(matchingRules(%+v, %v)) > 0) == %v, want %v", rules, tt.eventPath, len(matches) > 0, tt.match)
 		}

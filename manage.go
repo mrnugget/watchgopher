@@ -17,14 +17,16 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan CmdPaylo
 
 	go func() {
 		for ev := range events {
-			matches := matchingRules(rules, ev.Name)
+
+			dir, file := path.Split(ev.Name)
+			dir = stripTrailingSlash(dir)
+
+			matches := matchingRules(rules, dir, file)
 			if len(matches) > 0 {
 				for _, rule := range matches {
 					cmd := exec.Command(rule.Run, getEventType(ev), ev.Name)
 
 					if rule.ChangePwd {
-						dir, _ := path.Split(ev.Name)
-						dir = stripTrailingSlash(dir)
 						cmd.Dir = dir
 					}
 
@@ -39,11 +41,8 @@ func Manage(events chan *fsnotify.FileEvent, rules []*Rule) (queue chan CmdPaylo
 	return queue
 }
 
-func matchingRules(rules []*Rule, filename string) (matches []*Rule) {
+func matchingRules(rules []*Rule, dir, filename string) (matches []*Rule) {
 	matches = make([]*Rule, 0)
-
-	dir, file := path.Split(filename)
-	dir = stripTrailingSlash(dir)
 
 	for _, r := range rules {
 		if r.Path == dir {
@@ -52,7 +51,7 @@ func matchingRules(rules []*Rule, filename string) (matches []*Rule) {
 				continue
 			}
 
-			match, err := filepath.Match(r.Pattern, file)
+			match, err := filepath.Match(r.Pattern, filename)
 			if match && err == nil {
 				matches = append(matches, r)
 			}
