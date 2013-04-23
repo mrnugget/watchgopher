@@ -93,6 +93,9 @@ Every **rule** can use optional attributes:
    specified **"run"** command or not. If not specified, the default is
    **false**. If it's **true**, then Watchgopher will log the commands STDERR and
    STDOUT to its logoutput, prefixed with the commands filename.
+2. **"change_pwd"**: If this is **true** (default, when unspecified, is **false**)
+   Watchgopher changes the working directory of the executed command to the path
+   of the directory to watch.
 
 Whenever an event is triggered in a directory, watchgopher checks which rules
 apply to this event (by checking against the `"pattern"`). If a rule applies,
