@@ -1,0 +1,5 @@
+{
+  "/Users/mrnugget/Downloads": [
+    {"pattern": "*.zip", "run": "/Users/mrnugget/.watchgophers/unzip.rb"}
+  ]
+}

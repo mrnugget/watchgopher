@@ -40,6 +40,10 @@ Watchgopher calling this command:
 
   `/Users/mrnugget/bin/unzipper.rb CREATE /Users/mrnugget/Downloads/new.zip`
 
+Check out the [examples](https://github.com/mrnugget/watchgopher/tree/master/examples)
+directory for a config file and an example script to unzip new `*.zip` files in
+a folder.
+
 ## Usage
 
 Watchgopher will pass two arguments to every specified command, should a file
