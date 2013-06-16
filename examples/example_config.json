@@ -1,5 +1,10 @@
 {
-  "/Users/mrnugget/Downloads": [
-    {"pattern": "*.zip", "run": "/Users/mrnugget/.watchgophers/unzip.rb"}
+  "/home/username/downloads": [
+    {
+      "pattern": "*.zip",
+      "run": "/path/to/watchgopher/examples/unzip_files.rb",
+      "log_output": true,
+      "change_pwd": true
+    }
   ]
 }
