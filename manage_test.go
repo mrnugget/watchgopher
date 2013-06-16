@@ -26,6 +26,8 @@ var matchTests = []struct {
 	{"/a/b", "*_chapter.md", "/a/b/1st_chapter.md", true},
 	{"/a/b", "*_chapter.md", "/a/b/1.chapter.md", false},
 	{"/a/b", "1st_chapter.md", "/a/b/1st_chapter.md", true},
+	{"/a/b", "*.tar.gz", "/a/b/archive.tar.gz", true},
+	{"/a/b", "*.tar.bz2", "/a/b/archive.tar.bz2", true},
 }
 
 func TestMatchingRules(t *testing.T) {
