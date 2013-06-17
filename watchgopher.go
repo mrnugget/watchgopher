@@ -10,7 +10,10 @@ import (
 	"path"
 )
 
+const VERSION = "0.1"
+
 func main() {
+	log.Printf("Starting watchgopher %s ...\n", VERSION)
 	flag.Parse()
 	configPath := flag.Arg(0)
 	_, err := os.Stat(configPath)
