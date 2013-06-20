@@ -1,17 +1,16 @@
 # Watchgopher [![Build Status](https://travis-ci.org/mrnugget/watchgopher.png)](https://travis-ci.org/mrnugget/watchgopher)
 
-Watchgopher listens to file events in directories and dispatches these events
-(including event type and file) to commands of your choice to handle them.
+Watchgopher is a small, lightweight tool that listens to file events in
+directories and dispatches these events (including event type and file) to
+commands of your choice to handle them.
 
 ## Getting Started
 
-1. Make sure you have [Go](http://golang.org/) running on your system and setup.
-   Then use the `go` command to install Watchgopher:
+1. Make sure you have Watchgopher installed (see the "Installation" section
+   further down for instructions).
 
-    `$ go get -u github.com/mrnugget/watchgopher`
-
-2. Create a configuration file for Watchgopher to use. Modify this example to
-   your needs and save it:
+2. Create a configuration file for Watchgopher to use. Modify this example
+   according to your needs and save it:
 
    ```
    {
@@ -44,6 +43,21 @@ Check out the [examples](https://github.com/mrnugget/watchgopher/tree/master/exa
 directory for a config file and an example script to unzip new `*.zip` files in
 a folder.
 
+## Installation
+### Binary Releases
+
+Download one of the pre-built binary releases for Linux or OS X (darwin):
+
+ * [watchgopher-0.1-darwin-amd64.tar.gz](https://s3-us-west-2.amazonaws.com/watchgopher/watchgopher-0.1-darwin-amd64.tar.gz)
+ * [watchgopher-0.1-linux-amd64.tar.gz](https://s3-us-west-2.amazonaws.com/watchgopher/watchgopher-0.1-linux-amd64.tar.gz)
+
+### Compiling From Source
+
+Make sure you have [Go](http://golang.org/) running on your system and setup.
+Then use the `go` command to install Watchgopher and its dependencies:
+
+  `$ go get -u github.com/mrnugget/watchgopher`
+
 ## Usage
 
 Watchgopher will pass two arguments to every specified command, should a file
@@ -55,7 +69,7 @@ will be:
 
 To properly use Watchgopher, your specified commands should take care of those
 arguments and act accordingly. What those scripts will do is entirely up to
-them.
+them. For a more thorough explanation read [this blog post](http://mrnugget.github.io/blog/2013/04/07/watchgopher/).
 
 ## Configuration
 
