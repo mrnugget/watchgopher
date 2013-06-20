@@ -97,28 +97,28 @@ Watchgopher should keep track of.
 
 Every **rule** requires two attributes:
 
-1. **"run"**: Absolute path to command which will handle the event. If the
+1. **run**: Absolute path to command which will handle the event. If the
    command is in your `$PATH` you won't need to provide the absolute path, just
    the name of the command.
-2. **"pattern"**: Defines which pattern a filename of an event has to match in
+2. **pattern**: Defines which pattern a filename of an event has to match in
    order to get dispatched to he **"run"** command. [See
    this](http://golang.org/pkg/path/filepath/#Match) for an explanation of possible
    patterns.
 
 Every **rule** can use optional attributes:
 
-1. **"log_output"**: Tells Watchgopher whether to log the output of the
-   specified **"run"** command or not. If not specified, the default is
+1. **log_output**: Tells Watchgopher whether to log the output of the
+   specified **run** command or not. If not specified, the default is
    **false**. If it's **true**, then Watchgopher will log the commands STDERR and
    STDOUT to its logoutput, prefixed with the commands filename.
-2. **"change_pwd"**: If this is **true** (default, when unspecified, is **false**)
+2. **change_pwd**: If this is **true** (default, when unspecified, is **false**)
    Watchgopher changes the working directory of the executed command to the path
    of the directory to watch.
 
 Whenever an event is triggered in a directory, watchgopher checks which rules
-apply to this event (by checking against the `"pattern"`). If a rule applies,
+apply to this event (by checking against the `pattern`). If a rule applies,
 because the defined pattern matches the file events filename, Watchgopher will
-dispatch the event to the defined command (`"run"`).
+dispatch the event to the defined command (`run`).
 
 ## Thanks
 
