@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -12,9 +13,20 @@ import (
 
 const VERSION = "0.1"
 
+func usage() {
+	fmt.Fprintf(os.Stderr, "Watchgopher %s - Listen to file changes and react to them\n", VERSION)
+	fmt.Fprintf(os.Stderr, "\nUsage:\n")
+	fmt.Fprintf(os.Stderr, "\t watchgopher [configuration file]\n")
+	fmt.Fprintf(os.Stderr, "\nArguments:\n")
+	fmt.Fprintf(os.Stderr, "\t -h or --help\t\tPrint help (this message) and exit\n")
+}
+
 func main() {
-	log.Printf("Starting watchgopher %s ...\n", VERSION)
+	flag.Usage = usage
 	flag.Parse()
+
+	log.Printf("Starting watchgopher %s ...\n", VERSION)
+
 	configPath := flag.Arg(0)
 	_, err := os.Stat(configPath)
 	if err != nil && os.IsNotExist(err) {
