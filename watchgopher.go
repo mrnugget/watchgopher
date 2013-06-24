@@ -13,17 +13,25 @@ import (
 
 const VERSION = "0.1"
 
+var versionFlag = flag.Bool("version", false, "Print version of this build")
+
 func usage() {
 	fmt.Fprintf(os.Stderr, "Watchgopher %s - Listen to file changes and react to them\n", VERSION)
 	fmt.Fprintf(os.Stderr, "\nUsage:\n")
 	fmt.Fprintf(os.Stderr, "\t watchgopher [configuration file]\n")
 	fmt.Fprintf(os.Stderr, "\nArguments:\n")
-	fmt.Fprintf(os.Stderr, "\t -h or --help\t\tPrint help (this message) and exit\n")
+	fmt.Fprintf(os.Stderr, "\t --help or -h\t\tPrint help (this message) and exit\n")
+	fmt.Fprintf(os.Stderr, "\t --version\t\tPrint version number and exit\n")
 }
 
 func main() {
 	flag.Usage = usage
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("Watchgopher %s\n", VERSION)
+		os.Exit(0)
+	}
 
 	log.Printf("Starting watchgopher %s ...\n", VERSION)
 
