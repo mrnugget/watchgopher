@@ -21,9 +21,9 @@ func TestParseConfig(t *testing.T) {
 
 		for _, rule := range rules {
 			found = found || (testRule.Path == rule.Path &&
-			testRule.Run == rule.Run &&
-			testRule.Pattern == rule.Pattern &&
-			testRule.ChangePwd == rule.ChangePwd)
+				testRule.Run == rule.Run &&
+				testRule.Pattern == rule.Pattern &&
+				testRule.ChangePwd == rule.ChangePwd)
 		}
 
 		if !found {
